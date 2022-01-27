@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--此处必须一致-->
+<mapper namespace="com.YuezhIforum.dao.yuezhiforumDao">
+
+<!--    int register(User user) throws SQLException;-->
+    <insert id="register"   parameterType="com.YuezhIforum.bean.User">
+        insert into user values(null,#{name},#{password},#{sex},#{age},#{school},0,'one.png')
+    </insert>
+
+<!--     User login(String name);-->
+    <select id="login" parameterType="string" resultType="com.YuezhIforum.bean.User">
+        select * from user where name=#{name}
+    </select>
+
+<!--     int updateImg(String name,String img);-->
+    <update id="updateImg">
+        update user set img=#{arg1} where name=#{arg0}
+    </update>
+
+<!--    List<String> findall();-->
+    <select id="findall" resultType="string">
+        select distinct poststype from posts where poststype!='公告'
+    </select>
+
+<!--     List<Posts> findgongao();-->
+    <select id="findgonggao" resultType="com.YuezhIforum.bean.Posts">
+        select * from posts where poststype='公告'
+    </select>
+
+<!--      根据poststype查询posts表的所有数据
+        List<Posts> type_findall(String postsType,int startid,int overid);-->
+    <select id="type_findall"  resultType="com.YuezhIforum.bean.Posts">
+        select * from posts where poststype=#{arg0} ORDER BY id asc  LIMIT #{arg1},#{arg2}
+    </select>
+
+<!--    List<Posts> id_findall(int postsid) throws SQLException;-->
+    <select id="id_findall" parameterType="int" resultType="com.YuezhIforum.bean.Posts">
+        select * from posts where id=#{id}
+    </select>
+
+<!--      List<Posts> search(String postsvalue,int startid) ;-->
+    <select id="search" resultType="com.YuezhIforum.bean.Posts">
+        select * from posts where posts.postsname like "%"#{arg0}"%" or postsbody like "%"#{arg0}"%" or postsauthor like "%"#{arg0}"%" or poststype like "%"#{arg0}"%" order by id asc limit #{arg1},4
+    </select>
+
+<!--     int postsPublish(Posts posts);-->
+    <insert id="postsPublish" parameterType="com.YuezhIforum.bean.Posts">
+        insert into posts values(null,#{postsname},#{postsauthor},#{postsdate},#{postsbody},#{postsimg},#{poststype},#{uid},0)
+    </insert>
+
+<!--      int findUseId(String name);-->
+    <select id="findUseId" parameterType="string" resultType="int">
+        select id from user where name=#{name}
+    </select>
+
+<!--     List<Posts> uid_findall(int uid);-->
+    <select id="uid_findall" resultType="com.YuezhIforum.bean.Posts" parameterType="int">
+        select * from posts where uid=#{uid}
+    </select>
+
+<!--  修改用户name
+    int updateUsername(int id,String newvalue);-->
+    <update id="updateUsername">
+        update user set name=#{arg1} where id=#{arg0}
+    </update>
+
+<!--     int updateUsersex(int id,String newvalue);-->
+    <update id="updateUsersex">
+        update user set sex=#{arg1} where id=#{arg0}
+    </update>
+
+<!--     int updateUserage(int id,String newvalue) ;-->
+    <update id="updateUserage">
+        update user set age=#{arg1} where id=#{arg0}
+    </update>
+
+<!--    int updateUserSchool(int id,String newvalue) ;-->
+    <update id="updateUserSchool">
+        update user set school=#{arg1} where id=#{arg0}
+    </update>
+
+<!--    int updateUserpassword(int id,String newvalue);-->
+    <update id="updateUserpassword">
+        update user set password=#{arg1} where id=#{arg0}
+    </update>
+
+<!--    int deletepots(int postsid) ;-->
+    <delete id="deletepots" parameterType="int">
+        delete from posts where id=#{id}
+    </delete>
+
+<!--    Posts selectone();-->
+    <select id="selectone" resultType="com.YuezhIforum.bean.Posts">
+        SELECT * FROM posts ORDER BY RAND() LIMIT 1
+    </select>
+
+<!--      List<Posts> selectnum() ;-->
+    <select id="selectnum" resultType="com.YuezhIforum.bean.Posts">
+        SELECT * FROM posts ORDER BY RAND() LIMIT 4
+    </select>
+
+<!--    int postsTypeCount(String postsType) ;-->
+    <select id="postsTypeCount" resultType="int" parameterType="string">
+        select COUNT(*) from posts where poststype=#{poststype}
+    </select>
+
+<!--      int postsSearchCount(String postsvalue);-->
+    <select id="postsSearchCount" resultType="int">
+        select count(*) from posts where postsname like  "%"#{arg0}"%" or postsbody like "%"#{arg0}"%" or postsauthor like "%"#{arg0}"%" or poststype like "%"#{arg0}"%"
+    </select>
+
+<!--     List<Posts> findallPosts() ;-->
+    <select id="findallPosts" resultType="com.YuezhIforum.bean.Posts">
+        select * from posts
+    </select>
+
+<!--      根据uid查询用户发表帖子的数量
+    int userpostsCount(int uid) ;-->
+    <select id="userpostsCount" resultType="int" parameterType="int">
+        select count(*) from posts where uid=#{uid}
+    </select>
+
+<!--      发表评论
+    int commentPublish(Comment comment);-->
+    <insert id="commentPublish" parameterType="com.YuezhIforum.bean.Comment">
+        insert into comment values(null,#{commentValue},#{postsid},#{uid},#{date})
+    </insert>
+
+<!--     根据postsid查询评论
+    List<Comment> postsidFindComment(int postsid);-->
+    <select id="postsidFindComment" parameterType="int" resultType="com.YuezhIforum.bean.Comment">
+        select * from comment where postsid=#{postsid}
+    </select>
+
+<!--     根据用户id查询用户发表的评论
+    List<Comment> useidFindComment(int uid) ;-->
+    <select id="useidFindComment" resultType="com.YuezhIforum.bean.Comment" parameterType="int">
+        SELECT * FROM comment WHERE uid=#{uid}
+    </select>
+
+<!--    根据评论id查询posts
+    Posts commentidFindPosts(int commentid) ;-->
+    <select id="commentidFindPosts" parameterType="int" resultType="com.YuezhIforum.bean.Posts">
+        SELECT a.* from posts a,`comment` b WHERE a.id=b.postsid and b.id=#{id}
+    </select>
+
+<!--      查询posts的poststop
+    int findPostsTop(int postsid);-->
+    <select id="findPostsTop" resultType="int" parameterType="int">
+        select poststop from posts where id=#{id}
+    </select>
+
+<!--     更新posts的poststop
+    int updatePostsTop(int newPostsTop,int postsid);-->
+    <update id="updatePostsTop">
+        update posts set poststop=#{arg0} where id=#{arg1}
+    </update>
+
+<!--     根据poststop排序查询所有posts
+    List<Posts> topFindPosts() ;-->
+    <select id="topFindPosts" resultType="com.YuezhIforum.bean.Posts">
+        select * from posts ORDER BY poststop desc limit 0,6
+    </select>
+
+<!-- 根据userid查询user
+    User userIdFindUser(int uid) ;-->
+    <select id="userIdFindUser" parameterType="int" resultType="com.YuezhIforum.bean.User">
+        select * from user where id=#{id}
+    </select>
+
+<!--      查询所有的帖子浏览量
+    int sumPostsTop();-->
+    <select id="sumPostsTop" resultType="int">
+        select sum(poststop) from posts
+    </select>
+
+</mapper>
